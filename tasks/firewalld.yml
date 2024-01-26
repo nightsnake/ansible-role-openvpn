@@ -15,7 +15,7 @@
     - ansible_python.version.major == 2
 
 - name: Enable OpenVPN Port (firewalld)
-  ansible.posix.firewalld:
+  firewalld:
     port: "{{ openvpn_port }}/{{ openvpn_proto }}"
     zone: "{{ firewalld_default_interface_zone }}"
     permanent: true
@@ -23,7 +23,7 @@
     state: enabled
 
 - name: Set tun0 interface to internal
-  ansible.posix.firewalld:
+  firewalld:
     interface: tun0
     zone: internal
     permanent: true
@@ -31,7 +31,7 @@
     state: enabled
 
 - name: Set default interface to external
-  ansible.posix.firewalld:
+  firewalld:
     interface: "{{ ansible_default_ipv4.interface }}"
     zone: "{{ firewalld_default_interface_zone }}"
     permanent: true
@@ -39,7 +39,7 @@
     state: enabled
 
 - name: Enable masquerading on external zone
-  ansible.posix.firewalld:
+  firewalld:
     masquerade: true
     zone: "{{ firewalld_default_interface_zone }}"
     permanent: true

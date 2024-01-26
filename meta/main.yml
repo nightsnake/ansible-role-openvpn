@@ -23,5 +23,4 @@ galaxy_info:
         - trusty
   galaxy_tags:
     - networking
-
 dependencies: []

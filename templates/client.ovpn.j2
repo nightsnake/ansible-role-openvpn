@@ -18,9 +18,13 @@ keepalive {{ openvpn_keepalive_ping }} {{ openvpn_keepalive_timeout }}
 {% if openvpn_compression is not undefined and openvpn_compression != "" %}
 compress {{ openvpn_compression }}
 {% endif %}
-persist-key
-persist-tun
-verb 3
+
+{% if openvpn_topology is defined and openvpn_topology|length %}
+#topology {{ openvpn_topology }}
+{% endif %}
+#persist-key
+#persist-tun
+verb 4
 
 {% if openvpn_use_ldap %}
 auth-user-pass
@@ -30,8 +34,8 @@ auth-user-pass
 {{ option }}
 {% endfor %}
 
-route-method exe
-route-delay 2
+#route-method exe
+#route-delay 2
 {% if openvpn_client_register_dns %}
 register-dns
 {% endif %}

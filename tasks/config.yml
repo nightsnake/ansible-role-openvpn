@@ -37,19 +37,6 @@
     mode: a+x
   when: openvpn_script_client_disconnect is defined
 
-- name: Ensure auth folder exist in openvpn dir
-  file:
-    path: "{{ openvpn_base_dir }}/auth"
-    state: directory
-    mode: 0755
-  when: openvpn_use_ldap
-
-- name: Delete auth folder in openvpn dir
-  file:
-    path: "{{ openvpn_base_dir }}/auth"
-    state: absent
-  when: not openvpn_use_ldap
-
 - name: Install LDAP config
   template:
     src: ldap.conf.j2
@@ -84,7 +71,7 @@
     mode: 0755
   when: openvpn_client_config
 
-- name: Create client configs
+- name: Create client config directory
   template:
     src: client_ccd.j2
     dest: "{{ openvpn_base_dir }}/{{ openvpn_client_config_dir }}/{{ item.key }}"
@@ -92,22 +79,14 @@
     group: root
     mode: 0644
   when: openvpn_client_config
-  with_dict: "{{ openvpn_client_configs }}"
+  with_dict: "{{ openvpn_client_config_present }}"
 
-- name: List client config directory
-  shell: "ls -1 {{ openvpn_base_dir }}/{{ openvpn_client_config_dir }}"
-  register: __ccd_contents
-  changed_when: false
-  when: openvpn_client_config
-
-- name: Delete undeclared configs in client config directory
+- name: Delete custom client config from client config directory
   file:
     path: "{{ openvpn_base_dir }}/{{ openvpn_client_config_dir }}/{{ item }}"
     state: absent
-  when:
-    - item not in openvpn_client_configs.keys() | list
-    - openvpn_client_config
-  with_items: "{{ __ccd_contents.stdout_lines | default([]) }}"
+  when: openvpn_client_config
+  with_items: "{{ openvpn_client_config_absent }}"
 
 - name: Delete client config directory
   file:

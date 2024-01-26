@@ -48,12 +48,12 @@ server {{ openvpn_server_network }} {{ openvpn_server_netmask }}
 {% if openvpn_server_ipv6_network is defined %}
 server-ipv6 {{ openvpn_server_ipv6_network }}
 {% endif %}
-{% if openvpn_topology is defined %}
+{% if openvpn_topology is defined and openvpn_topology|length %}
 topology {{ openvpn_topology }}
 {% endif %}
 ifconfig-pool-persist {{ openvpn_ifconfig_pool_persist_file }}
 {% if openvpn_client_config %}
-client-config-dir {{ openvpn_client_config_dir }}
+client-config-dir /etc/openvpn/{{ openvpn_client_config_dir }}
 {% endif %}
 
 {% if openvpn_redirect_gateway|bool %}
